@@ -28,6 +28,7 @@ dependencies {
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.rest-assured:rest-assured:4.5.1")
 }
 
 tasks.withType<KotlinCompile> {
