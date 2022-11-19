@@ -100,4 +100,35 @@ internal class UserControllerTest {
             .body("address.country", `is`("USA"))
             .body("address.city", `is`("AL"))
     }
+
+    @Test
+    fun `should able to update the user by using JSON merge patch`() {
+        val requestBody = """
+            {
+                "age": 30,
+                "nickname": null,
+                "address": {
+                    "city": "AL"
+                }
+            }
+        """.trimIndent()
+        RestAssured.given()
+            .header(HttpHeaders.CONTENT_TYPE, "application/merge-patch+json")
+            .body(requestBody)
+            .patch("/users/1")
+            .then()
+            .statusCode(200)
+
+        RestAssured.`when`()
+            .get("/users/1")
+            .then()
+            .statusCode(200)
+            .assertThat()
+            .body("id", `is`(1))
+            .body("name", `is`("Peter"))
+            .body("nickname", `is`(""))
+            .body("age", `is`(30))
+            .body("address.country", `is`("USA"))
+            .body("address.city", `is`("AL"))
+    }
 }

@@ -3,6 +3,8 @@ package poc.controller
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
+import com.github.fge.jsonpatch.Patch
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch
 import org.springframework.web.bind.annotation.*
 import poc.model.Address
 import poc.model.User
@@ -42,6 +44,15 @@ class UserController(
 
     @PatchMapping("/{id}", consumes = ["application/json-patch+json"])
     private fun updateUserByJsonPatch(@PathVariable id: Int, @RequestBody patch: JsonPatch) {
+        applyPatchToUser(patch, id)
+    }
+
+    @PatchMapping("/{id}", consumes = ["application/merge-patch+json"])
+    private fun updateUserByJsonMergePatch(@PathVariable id: Int, @RequestBody patch: JsonMergePatch) {
+        applyPatchToUser(patch, id)
+    }
+
+    private fun applyPatchToUser(patch: Patch, id: Int) {
         val user = userRepository[id]!!
         val patched: JsonNode = patch.apply(objectMapper.convertValue(user, JsonNode::class.java))
         val patchedUser = objectMapper.treeToValue(patched, User::class.java)
